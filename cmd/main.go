@@ -5,8 +5,9 @@ import (
 )
 
 func main() {
+	// TODO: create a `config` folder to handle variables coming directly from a `.env` file.
 	serverOpts := core.ServerOps{
-		Port: 8081,
+		Port: 3000,
 	}
 	server := core.NewServer(serverOpts)
 	server.Start()
