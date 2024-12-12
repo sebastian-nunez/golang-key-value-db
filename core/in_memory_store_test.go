@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -45,6 +46,36 @@ func TestInMemoryStore(t *testing.T) {
 
 		if err != ErrKeyNotFound {
 			t.Errorf("expected error but got nil")
+		}
+	})
+}
+
+func BenchmarkInMemoryStore(b *testing.B) {
+	b.Run("set", func(b *testing.B) {
+		store := NewInMemoryStore()
+
+		for i := 0; i < b.N; i++ {
+			key := fmt.Sprintf("key->%q", i)
+			val := []byte("some-val")
+			store.Set(key, val)
+		}
+	})
+
+	b.Run("get", func(b *testing.B) {
+		store := NewInMemoryStore()
+
+		for i := 0; i < b.N; i++ {
+			key := fmt.Sprintf("key->%q", i)
+			store.Get(key)
+		}
+	})
+
+	b.Run("delete", func(b *testing.B) {
+		store := NewInMemoryStore()
+
+		for i := 0; i < b.N; i++ {
+			key := fmt.Sprintf("key->%q", i)
+			store.Delete(key)
 		}
 	})
 }
