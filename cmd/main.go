@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"github.com/sebastian-nunez/golang-key-value-db/core"
+)
 
 func main() {
-	fmt.Println("Hello!")
+	serverOpts := core.ServerOps{
+		Port: 8081,
+	}
+	server := core.NewServer(serverOpts)
+	server.Start()
 }
