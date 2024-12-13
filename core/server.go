@@ -11,7 +11,7 @@ import (
 var TcpBufferLength = 2048
 
 type ServerOps struct {
-	Port int
+	Port int64
 }
 
 type Server struct {
