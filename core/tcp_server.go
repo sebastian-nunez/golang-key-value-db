@@ -10,21 +10,22 @@ import (
 // Number of bytes read from the TCP connection.
 var TcpBufferLength = 2048
 
-type ServerOps struct {
+type TcpServerOps struct {
 	Port int64
 }
 
-type Server struct {
-	opts ServerOps
+type TcpServer struct {
+	opts TcpServerOps
 }
 
-func NewServer(opts ServerOps) *Server {
-	return &Server{
+func NewTcpServer(opts TcpServerOps) *TcpServer {
+	return &TcpServer{
 		opts: opts,
 	}
 }
 
-func (s *Server) Start() {
+// Start spins up the TCP server and starts listening for messages.
+func (s *TcpServer) Start() {
 	fmt.Println("Server starting on port:", s.opts.Port)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.opts.Port))
@@ -52,9 +53,9 @@ func (s *Server) Start() {
 	}
 }
 
-func (s *Server) handleTcpConnection(conn net.Conn) {
+func (s *TcpServer) handleTcpConnection(conn net.Conn) {
 	defer conn.Close()
-	fmt.Println("---------------- New connection opened ----------------")
+	fmt.Println("New TCP connection opened!")
 
 	for {
 		buf := make([]byte, TcpBufferLength)

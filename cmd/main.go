@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	serverOpts := core.ServerOps{
+	serverOpts := core.TcpServerOps{
 		Port: config.Envs.Port,
 	}
-	server := core.NewServer(serverOpts)
+	server := core.NewTcpServer(serverOpts)
 	server.Start()
 }

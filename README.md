@@ -1,6 +1,6 @@
 # Golang Key Value Database
 
-A lightweight and intuitive, in-memory key-value store written in Go.
+A lightweight and intuitive, in-memory key-value store available through TCP written in Go.
 
 ## Features
 
