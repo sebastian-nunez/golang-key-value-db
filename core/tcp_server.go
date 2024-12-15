@@ -9,7 +9,7 @@ import (
 )
 
 // Number of bytes read from the TCP connection.
-var TcpBufferLength = 2048
+var TcpBufferLength = 2048 // ~2KB
 
 type TcpServerOps struct {
 	Port int64
@@ -68,14 +68,14 @@ func (s *TcpServer) handleTcpConnection(ctx context.Context, conn net.Conn) {
 	fmt.Printf("@%s New TCP connection opened.\n", conn.RemoteAddr())
 	defer conn.Close()
 
+	buf := make([]byte, TcpBufferLength)
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Printf("@%s Closing connection due to server shutdown.\n", conn.RemoteAddr())
 			return
 		default:
-			buf := make([]byte, TcpBufferLength)
-			n, err := conn.Read(buf)
+			n, err := conn.Read(buf) // Will never exceed the size of the input buffer
 			if err != nil {
 				if errors.Is(err, io.EOF) {
 					fmt.Printf("@%s TCP connection closed.\n", conn.RemoteAddr())
@@ -85,19 +85,20 @@ func (s *TcpServer) handleTcpConnection(ctx context.Context, conn net.Conn) {
 				return
 			}
 
-			if n < TcpBufferLength {
-				fmt.Printf("@%s Received '%d' bytes: %s", conn.RemoteAddr(), n, buf[:n])
-			} else {
-				fmt.Printf("@%s Received '%d' bytes which exceed the limit of '%d' bytes. Extra bytes will be ignored: %s", conn.RemoteAddr(), n, TcpBufferLength, buf[:TcpBufferLength])
-			}
-
+			// n will never be greater than TcpBufferLength, but it could be less than
+			// TcpBufferLength if fewer bytes are available. We use the actual number of
+			// bytes read (n) to process the data.
 			data := string(buf[:n])
+			fmt.Printf("@%s Received '%d' bytes: %s\n", conn.RemoteAddr(), n, data)
+
 			// The last character is a newline, so we remove it
-			data = data[:len(data)-1]
+			if len(data) > 0 && data[len(data)-1] == '\n' {
+				data = data[:len(data)-1]
+			}
 
 			req, err := ParseProtocol(data)
 			if err != nil {
-				fmt.Printf("@%s Error parsing protocol %s\n", conn.RemoteAddr(), err)
+				fmt.Printf("@%s Error parsing protocol: %s\n", conn.RemoteAddr(), err)
 				s.writeError(err, conn)
 				continue
 			}
