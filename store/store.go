@@ -1,4 +1,4 @@
-package core
+package store
 
 type DataStore[K comparable, V any] interface {
 	Set(key K, val V)
