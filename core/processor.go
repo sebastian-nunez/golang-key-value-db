@@ -86,6 +86,7 @@ func (cp *CommandProcessor) processExpiry(ctx context.Context, key string, ttl t
 		// Uses a blocking timer to pause execution until the TTL expires,
 		// after which the key is removed from the store.
 		<-time.After(ttl)
+		fmt.Printf("Deleting key '%s' since TTL (%s) has passed/expired.\n", key, ttl)
 		cp.store.Delete(key)
 	}
 }
