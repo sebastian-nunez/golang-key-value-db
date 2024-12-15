@@ -1,15 +1,15 @@
-# Golang Key Value Database
+# Golang key-value database (KVDB)
 
-A lightweight and intuitive, in-memory key-value store available through TCP written in Go.
+A lightweight and intuitive, in-memory, key-value store available through a [TCP](<https://www.fortinet.com/resources/cyberglossary/tcp-ip#:~:text=Transmission%20Control%20Protocol%20(TCP)%20is,exchange%20messages%20over%20a%20network.>) connection written in Go.
 
-## Features
+## Features/API
 
 - **SET**: Store a key-value pair in the database, with an optional time-to-live (TTL) value.
-  - Example Command : `SET <key> <value> <ttl>`
+  - Example : `SET <key> <value> <ttl>`
 - **GET**: Retrieve the value associated with a given key from the database.
-  - Example Command: `GET <key>`
+  - Example: `GET <key>`
 - **DELETE**: Remove a key-value pair from the database.
-  - Example Command: `DELETE <key>`
+  - Example: `DELETE <key>`
 
 ## Getting Started
 
