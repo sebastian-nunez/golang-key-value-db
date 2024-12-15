@@ -9,6 +9,7 @@ import (
 
 	"github.com/sebastian-nunez/golang-key-value-db/config"
 	"github.com/sebastian-nunez/golang-key-value-db/core"
+	"github.com/sebastian-nunez/golang-key-value-db/store"
 )
 
 func main() {
@@ -23,10 +24,13 @@ func main() {
 		cancel()
 	}()
 
+	datastore := store.NewInMemoryStore()
+	processor := core.NewCommandProcessor(datastore)
+
 	serverOpts := core.TcpServerOps{
 		Port: config.Envs.Port,
 	}
-	server := core.NewTcpServer(serverOpts)
+	server := core.NewTcpServer(serverOpts, processor)
 	go server.Start(ctx)
 
 	<-ctx.Done()

@@ -17,11 +17,13 @@ type TcpServerOps struct {
 
 type TcpServer struct {
 	opts TcpServerOps
+	rp   RequestProcessor
 }
 
-func NewTcpServer(opts TcpServerOps) *TcpServer {
+func NewTcpServer(opts TcpServerOps, rp RequestProcessor) *TcpServer {
 	return &TcpServer{
 		opts: opts,
+		rp:   rp,
 	}
 }
 
@@ -88,6 +90,38 @@ func (s *TcpServer) handleTcpConnection(ctx context.Context, conn net.Conn) {
 			} else {
 				fmt.Printf("@%s Received '%d' bytes which exceed the limit of '%d' bytes. Extra bytes will be ignored: %s", conn.RemoteAddr(), n, TcpBufferLength, buf[:TcpBufferLength])
 			}
+
+			data := string(buf[:n])
+			// The last character is a newline, so we remove it
+			data = data[:len(data)-1]
+
+			req, err := ParseProtocol(data)
+			if err != nil {
+				fmt.Printf("@%s Error parsing protocol %s\n", conn.RemoteAddr(), err)
+				s.writeError(err, conn)
+				continue
+			}
+
+			res, err := s.rp.Process(ctx, req)
+			if err != nil {
+				fmt.Printf("@%s Error processing request: %s\n", conn.RemoteAddr(), err)
+				s.writeError(err, conn)
+				continue
+			}
+
+			s.writeSuccess(res.Value, conn)
 		}
 	}
+}
+
+func (s *TcpServer) writeError(err error, conn net.Conn) {
+	conn.Write([]byte(fmt.Sprintf("ERROR: %s\n", err)))
+}
+
+func (s *TcpServer) writeSuccess(value []byte, conn net.Conn) {
+	if len(value) == 0 {
+		conn.Write([]byte("OK\n"))
+		return
+	}
+	conn.Write([]byte(fmt.Sprintf("OK: %s\n", value)))
 }

@@ -4,12 +4,14 @@ A lightweight and intuitive, in-memory, key-value store available through a [TCP
 
 ## Features/API
 
-- **SET**: Store a key-value pair in the database, with an optional time-to-live (TTL) value.
-  - Example : `SET <key> <value> <ttl>`
+- **SET**: Store a key-value pair in the database, with an optional time-to-live (TTL) value (in `Seconds`).
+  - Usage : `SET <key> <value> <ttl>`
 - **GET**: Retrieve the value associated with a given key from the database.
-  - Example: `GET <key>`
+  - Usage: `GET <key>`
 - **DELETE**: Remove a key-value pair from the database.
-  - Example: `DELETE <key>`
+  - Usage: `DELETE <key>`
+- **PING**: Health-check endpoint that responds with "PONG"
+  - Usage: `PING`
 
 ## Getting Started
 
